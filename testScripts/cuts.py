@@ -21,7 +21,7 @@ image = sys.argv[1]
 grayImg = cv.LoadImage(image, cv.CV_LOAD_IMAGE_GRAYSCALE)
 mat = cv.GetMat(grayImg)
 
-t = createHistogram(mat, 0)
+tmpMat = createHistogram(mat, 0)
 continuousZeros = 0
 #for j in range(mat.cols):
 #  if t[j] < 5:

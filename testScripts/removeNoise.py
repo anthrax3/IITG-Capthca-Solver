@@ -14,40 +14,40 @@ def increaseContrast(mat):
   return t
 
 def avg(m, i, j):
-  s = m[i,j]
-  c = 1
+  sumNeighbours = m[i,j]
+  count = 1
 
   if i > 0:
-    s += m[i - 1, j]
-    c += 1
+    sumNeighbours += m[i - 1, j]
+    count += 1
 
     if j > 0:
-      s += m[i - 1, j - 1]
-      c += 1
+      sumNeighbours += m[i - 1, j - 1]
+      count += 1
     if j < m.cols - 1:
-      s += m[i - 1, j + 1]
-      c += 1
+      sumNeighbours += m[i - 1, j + 1]
+      count += 1
   
   if i < m.rows - 1:
-    s += m[i + 1, j]
-    c += 1
+    sumNeighbours += m[i + 1, j]
+    count += 1
 
     if j > 0:
-      s += m[i + 1, j - 1]
-      c += 1
+      sumNeighbours += m[i + 1, j - 1]
+      count += 1
     if j < m.cols - 1:
-      s += m[i + 1, j + 1]
-      c += 1
+      sumNeighbours += m[i + 1, j + 1]
+      count += 1
 
   if j > 0:
-    s += m[i, j - 1]
-    c += 1
+    sumNeighbours += m[i, j - 1]
+    count += 1
 
   if j < m.cols - 1:
-    s += m[i, j + 1]
-    c += 1
+    sumNeighbours += m[i, j + 1]
+    count += 1
 
-  return (s * 1.0 / c)
+  return (sumNeighbours * 1.0 / count)
 
 def averageMat(m):
   t = cv.CreateMat(m.rows, m.cols, m.type)

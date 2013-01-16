@@ -7,7 +7,6 @@ mat = cv.GetMat(grayImg)
 #cv.SaveImage("test.png", mat)
 
 for i in range(mat.cols):
-  s = 0
   for j in range(mat.rows):
     if mat[j,i] >= 180:
       mat[j,i] = 255
