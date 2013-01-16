@@ -79,6 +79,13 @@ def averageMat(m):
   
   return t
 
+image = sys.argv[1]
+
+grayImg = cv.LoadImage(image, cv.CV_LOAD_IMAGE_GRAYSCALE)
+mat = cv.GetMat(grayImg)
+
+tmpArr = createHistogram(mat, 255)
+minimas = []
 
 
 image = sys.argv[1]
@@ -100,4 +107,6 @@ cv.Dilate(t, dilated)
 for i in range(dilated.rows):
   for j in range(dilated.cols):
     morphGrad[i,j] = dilated[i,j] - eroded[i,j]
+
 cv.SaveImage(image + "_avg_morphed", morphGrad)
+
