@@ -1,9 +1,19 @@
 #!/usr/bin/python
+# Author : Rajat Khanduja
+# Date : 15/1/13
+# 
+# This program is meant to modify the input image so that the noise is removed
+# and the image is obtained in a format in which it is possible to differentiate
+# between different characters.
 
 import cv
 import sys
 
 def increaseContrast(mat):
+  '''
+  Function to increase the contrast of the image represented by the input matrix
+  "mat". The matrix is of type cvmat of a grayscale image.
+  '''
   t = cv.CreateMat(mat.rows, mat.cols, mat.type)
   for i in range(mat.cols):
     for j in range(mat.rows):
@@ -13,7 +23,13 @@ def increaseContrast(mat):
         t[j,i] = 0
   return t
 
+
 def avg(m, i, j):
+  '''
+  This function finds the average value that should be stored at a pixel.
+  The input is the matrix (cvmat) of a grayscale image and the index at which
+  the average is required. 
+  '''
   sumNeighbours = m[i,j]
   count = 1
 
@@ -50,6 +66,12 @@ def avg(m, i, j):
   return (sumNeighbours * 1.0 / count)
 
 def averageMat(m):
+  '''
+  Function blurs the image by replacing the value at every pixel by the average
+  of the value of the pixel and its neighbours.
+
+  The input matrix should be of type cvmat of a grayscale image.
+  '''
   t = cv.CreateMat(m.rows, m.cols, m.type)
   for j in range(m.cols):
     for i in range(m.rows):
