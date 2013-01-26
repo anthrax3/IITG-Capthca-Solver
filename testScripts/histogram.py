@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# Author : Rajat Khanduja
+# Date : 23/1/13
+
 
 def createHistogram(mat, value):
   ''' This function basically creates an array of size of the number of columns
