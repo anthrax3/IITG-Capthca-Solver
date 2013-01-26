@@ -10,22 +10,26 @@ import cv
 import sys
 from contrast import increaseContrast, averageMat
 from histogram import createHistogram
+import cuts
+import logging
+import time
+
+logging.basicConfig(filename="logFiles/removeNoise.log", level=logging.INFO)
+
 
 image = sys.argv[1]
+
+t = time.localtime()
+timeString = str(t.tm_hour) + ":" + str(t.tm_min) + ":" + str(t.tm_sec) + " on " + str(t.tm_mday) + "-" + str(t.tm_mon) + "-" + str(t.tm_year)
+
+logging.info ("Started processing : " + image + " at " + timeString)
 
 grayImg = cv.LoadImage(image, cv.CV_LOAD_IMAGE_GRAYSCALE)
 mat = cv.GetMat(grayImg)
 
 tmpArr = createHistogram(mat, 255)
-minimas = []
+logging.debug ("Created histogram : " + str(tmpArr))
 
-
-image = sys.argv[1]
-
-grayImg = cv.LoadImage(image, cv.CV_LOAD_IMAGE_GRAYSCALE)
-mat = cv.GetMat(grayImg)
-
-#t = increaseContrast(averageMat(averageMat(mat)))
 t = increaseContrast(averageMat(averageMat(averageMat(averageMat(mat)))))
 #cv.SaveImage(image + "_avg", t)
 eroded = cv.CreateMat(t.rows, t.cols, t.type)
@@ -40,23 +44,18 @@ for i in range(dilated.rows):
     morphGrad[i,j] = dilated[i,j] - eroded[i,j]
 
 cv.SaveImage(image + "_avg_morphed", morphGrad)
+logging.debug ("Morphed and saved")
 
 hist = createHistogram(morphGrad, 255)
-onGoingCut = False
-cuts = []
-for i in range(len(hist)):
-  if not onGoingCut and hist[i] > 0:
-    cuts.append(i)
-    onGoingCut = True
-  elif onGoingCut:
-    if i - cuts[-1] > 30:
-      if hist[i] == 0: #or (hist[i] < hist[i - 1] and (i < len(hist) - 1 and hist[i] < hist[i + 1])):
-        cuts.append (i)
-        onGoingCut = False
+cutCols = cuts.getCuts(hist)
 
-for j in cuts:
-  for i in range(morphGrad.rows):
-    morphGrad[i,j] = 255
- 
+for i in cutCols:
+  for j in range(morphGrad.rows):
+    morphGrad[j,i] = 255
+
 cv.SaveImage(image + "_avg_morphed_cuts", morphGrad)
-      
+
+t = time.localtime()
+
+timeString = str(t.tm_hour) + ":" + str(t.tm_min) + ":" + str(t.tm_sec) + " on " + str(t.tm_mday) + "-" + str(t.tm_mon) + "-" + str(t.tm_year)
+logging.info("Ended process " + image + " at " + timeString)
