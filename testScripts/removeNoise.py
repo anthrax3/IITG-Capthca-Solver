@@ -44,19 +44,30 @@ cv.SaveImage(image + "_avg_morphed", morphGrad)
 hist = createHistogram(morphGrad, 255)
 onGoingCut = False
 cuts = []
+segments = []
 for i in range(len(hist)):
   if not onGoingCut and hist[i] > 0:
     cuts.append(i)
     onGoingCut = True
   elif onGoingCut:
-    if i - cuts[-1] > 30:
+    if i - cuts[-1] > 31:
       if hist[i] == 0: #or (hist[i] < hist[i - 1] and (i < len(hist) - 1 and hist[i] < hist[i + 1])):
+        segments.append( (cuts[-1], i))
         cuts.append (i)
         onGoingCut = False
 
-for j in cuts:
-  for i in range(morphGrad.rows):
-    morphGrad[i,j] = 255
+#for j in cuts:
+#  for i in range(morphGrad.rows):
+#    morphGrad[i,j] = 255
+
+idx = 1
+for segment in segments:
+  print segment
+  tmpMat = cv.CreateMat(morphGrad.rows, segment[1] - segment[0] + 1, morphGrad.type)
+  for i in range(tmpMat.rows):
+    for j in range(tmpMat.cols):
+      tmpMat[i,j] = morphGrad[i, segment[0] + j]
+  cv.SaveImage(image + "_cut_" + str(idx), tmpMat)
+  idx += 1
  
 cv.SaveImage(image + "_avg_morphed_cuts", morphGrad)
-      
