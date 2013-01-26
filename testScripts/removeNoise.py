@@ -26,12 +26,11 @@ grayImg = cv.LoadImage(image, cv.CV_LOAD_IMAGE_GRAYSCALE)
 mat = cv.GetMat(grayImg)
 
 #t = increaseContrast(averageMat(averageMat(mat)))
-t = increaseContrast(averageMat(averageMat(averageMat(mat))))
-cv.SaveImage(image + "_avg", t)
+t = increaseContrast(averageMat(averageMat(averageMat(averageMat(mat)))))
+#cv.SaveImage(image + "_avg", t)
 eroded = cv.CreateMat(t.rows, t.cols, t.type)
 dilated = cv.CreateMat(t.rows, t.cols, t.type)
 morphGrad = cv.CreateMat(t.rows, t.cols, t.type)
-
 
 cv.Erode (t, eroded)
 cv.Dilate(t, dilated)
@@ -42,3 +41,22 @@ for i in range(dilated.rows):
 
 cv.SaveImage(image + "_avg_morphed", morphGrad)
 
+hist = createHistogram(morphGrad, 255)
+onGoingCut = False
+cuts = []
+for i in range(len(hist)):
+  if not onGoingCut and hist[i] > 0:
+    cuts.append(i)
+    onGoingCut = True
+  elif onGoingCut:
+    if i - cuts[-1] > 30:
+      if hist[i] == 0: #or (hist[i] < hist[i - 1] and (i < len(hist) - 1 and hist[i] < hist[i + 1])):
+        cuts.append (i)
+        onGoingCut = False
+
+for j in cuts:
+  for i in range(morphGrad.rows):
+    morphGrad[i,j] = 255
+ 
+cv.SaveImage(image + "_avg_morphed_cuts", morphGrad)
+      
